@@ -101,7 +101,16 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
     
     setCurrentImageIndex(actualIndex);
     setIsLightboxOpen(true);
-  }, [gallerySettings.enableLightbox, rows]);
+  }, [gallerySettings.enableLightbox, rows, isPreviewing]);
+
+  /**
+   * Handle lightbox index changes from navigation
+   * 
+   * @param {number} newIndex - The new image index
+   */
+  const handleLightboxIndexChange = useCallback((newIndex: number): void => {
+    setCurrentImageIndex(newIndex);
+  }, []);
 
   /**
    * Generate custom styles based on Builder.io properties
@@ -204,6 +213,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
           onClose={() => setIsLightboxOpen(false)}
           images={images}
           currentIndex={currentImageIndex}
+          onIndexChange={handleLightboxIndexChange}
         />
       )}
     </section>

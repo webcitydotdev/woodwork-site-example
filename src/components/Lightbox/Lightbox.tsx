@@ -38,6 +38,7 @@ const Lightbox: React.FC<LightboxProps> = ({
   onClose, 
   images, 
   currentIndex,
+  onIndexChange,
   lightboxSettings = defaultLightboxSettings,
   styling = defaultLightboxStyling
 }) => {
@@ -93,11 +94,19 @@ const Lightbox: React.FC<LightboxProps> = ({
   }, [isOpen, isBrowser]);
 
   const handleNext = () => {
-    setActiveIndex((prevIndex) => (prevIndex + 1) % images.length);
+    const newIndex = (activeIndex + 1) % images.length;
+    setActiveIndex(newIndex);
+    if (onIndexChange) {
+      onIndexChange(newIndex);
+    }
   };
 
   const handlePrev = () => {
-    setActiveIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
+    const newIndex = (activeIndex - 1 + images.length) % images.length;
+    setActiveIndex(newIndex);
+    if (onIndexChange) {
+      onIndexChange(newIndex);
+    }
   };
 
   // Generate custom styles based on props

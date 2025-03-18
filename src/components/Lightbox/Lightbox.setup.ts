@@ -12,6 +12,7 @@ export interface LightboxProps {
   onClose: () => void;
   images: ImageItem[];
   currentIndex: number;
+  onIndexChange?: (index: number) => void;
   lightboxSettings?: LightboxSettings;
   styling?: LightboxStyling;
 }
