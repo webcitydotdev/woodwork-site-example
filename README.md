@@ -49,10 +49,9 @@ npm run dev
 
 The template comes with support for the following locales:
 - English (`en`)
-- French (`fr`)
-- Spanish (`es`)
 
 You can add more locales in `src/utils/builderUtils.ts` by updating the `VALID_LOCALES` array.
+and adding the locales to your builder.io space
 
 ### URL Structure
 
@@ -69,8 +68,7 @@ For this template to work properly, you need to create a content model in Builde
 1. Go to your Builder.io dashboard
 2. Navigate to Models → Create Model
 3. Name it `page`
-4. Set "Default path" to `/{locale}*`
-5. Add a "Custom targeting attribute" for `locale` and give it possible values like `en`, `fr`, `es`
+4. Set the path to return dynamically `http://localhost:3000/${!locale || locale === "Default" ? "en" : locale}${targeting?.urlPath || ''}`;
 
 
 ## 🧩 How It Works
@@ -133,7 +131,3 @@ When creating new components for Builder.io, follow this pattern to maintain con
 - [Builder.io Documentation](https://www.builder.io/c/docs/intro)
 - [Next.js Documentation](https://nextjs.org/docs)
 - [Zustand Documentation](https://zustand.docs.pmnd.rs/)
-
-## 📝 License
-
-This project is licensed under the MIT License.
