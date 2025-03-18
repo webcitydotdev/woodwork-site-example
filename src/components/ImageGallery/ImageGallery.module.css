@@ -1,0 +1,197 @@
+/**
+ * ImageGallery.module.css
+ * 
+ * CSS module for the ImageGallery component with optimized infinite animations.
+ * Uses CSS variables for customizable animation speeds.
+ */
+
+/* Gallery container styles */
+.gallery {
+  padding: 4rem 0;
+  background-color: #f7f9f9;
+  overflow: hidden;
+  will-change: transform; /* Performance optimization for animations */
+}
+
+.container {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* Row container styles */
+.rowContainer {
+  width: 100%;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Carousel container */
+.carousel {
+  width: 100%;
+  overflow: hidden;
+  backface-visibility: hidden; /* Prevent flickering during animation */
+  -webkit-backface-visibility: hidden;
+}
+
+/* Content that animates */
+.carouselContent {
+  display: flex;
+  /* Use cubic-bezier for smoother transitions at loop points */
+  animation: scrollRight var(--animation-speed, 30s) linear infinite;
+  animation-fill-mode: forwards; /* Ensure animation maintains state */
+  /* Set width to 300% which is more optimal for smooth looping */
+  width: 300%;
+  transform: translateZ(0); /* Force GPU acceleration */
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden; /* Prevent flickering */
+  -webkit-backface-visibility: hidden;
+  perspective: 1000px; /* 3D acceleration */
+  -webkit-perspective: 1000px;
+}
+
+/* Animation for rows moving in the opposite direction */
+.reverseAnimation {
+  animation: scrollLeft var(--animation-speed, 30s) linear infinite;
+}
+
+/* Individual carousel items */
+.carouselItem {
+  flex: 0 0 auto;
+  padding: 0.25rem;
+  height: auto;
+  transform: translateZ(0); /* Force GPU acceleration for each item */
+}
+
+/* Square image items (1:1 aspect ratio) */
+.squareItem {
+  width: 300px;
+  aspect-ratio: 1/1;
+}
+
+/* Wide image items (16:9 aspect ratio) */
+.wideItem {
+  width: 450px;
+  aspect-ratio: 16/9;
+}
+
+/* Container for each image with hover effects */
+.imageWrapper {
+  overflow: hidden;
+  border-radius: 0.5rem;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateZ(0); /* Force GPU acceleration */
+}
+
+/* Image styling */
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+  display: block;
+  transform: translateZ(0); /* Force GPU acceleration */
+}
+
+/* Overlay container that appears on hover */
+.imageOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Show overlay on hover */
+.imageWrapper:hover .imageOverlay {
+  opacity: 1;
+}
+
+/* Scale image on hover */
+.imageWrapper:hover .image {
+  transform: scale(1.05);
+}
+
+/* View icon styling */
+.viewIcon {
+  color: rgb(0, 0, 0);
+  font-size: 2rem;
+  font-weight: bold;
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 
+ * Animation keyframes
+ * Using 33.33% for optimal loop with a 300% width
+ */
+@keyframes scrollRight {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    /* Move exactly 1/3 of the width for smooth looping */
+    transform: translateX(-33.33%);
+  }
+}
+
+@keyframes scrollLeft {
+  0% {
+    /* Start at the same position as where scrollRight ends */
+    transform: translateX(-33.33%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Responsive breakpoints */
+@media (max-width: 1024px) {
+  .squareItem {
+    width: 250px;
+  }
+  
+  .wideItem {
+    width: 375px;
+  }
+  
+  .carouselItem {
+    padding: 0.2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .squareItem {
+    width: 200px;
+  }
+  
+  .wideItem {
+    width: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .squareItem {
+    width: 150px;
+  }
+  
+  .wideItem {
+    width: 225px;
+  }
+}

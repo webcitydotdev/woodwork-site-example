@@ -102,6 +102,32 @@ The template uses CSS variables for styling. You can customize the appearance by
 
 Register custom components for Builder.io in the `src/builder-registry.ts` file.
 
+### Component Structure
+
+Components in this project follow a standardized file structure pattern for better organization and separation of concerns:
+
+1. **`component-name.tsx`** - The main component file containing the React component logic and rendering.
+   
+2. **`component-name.module.css`** - CSS module file containing component-specific styles.
+   
+3. **`component-name.setup.ts`** - Contains TypeScript interfaces, types, and default props for the component.
+   
+4. **`component-name.registry.ts`** - Registers the component with Builder.io and defines how it will appear in the Builder.io editor, including customizable inputs and properties.
+
+#### Example: ImageGallery Component
+
+The ImageGallery component demonstrates this structure:
+
+- **`ImageGallery.tsx`** - Contains the component implementation with image grid layout and lightbox functionality.
+  
+- **`ImageGallery.module.css`** - Styling for the gallery, carousel animation, and image layouts.
+  
+- **`ImageGallery.setup.ts`** - Defines interfaces for image items, gallery settings, styling options, and default values.
+  
+- **`ImageGallery.registry.ts`** - Registers the component with Builder.io and defines editable properties for marketers such as images, animation speed, overlay settings, and styling options.
+
+When creating new components for Builder.io, follow this pattern to maintain consistency and make components easily configurable through the Builder.io interface.
+
 ## 📚 Additional Resources
 
 - [Builder.io Documentation](https://www.builder.io/c/docs/intro)
