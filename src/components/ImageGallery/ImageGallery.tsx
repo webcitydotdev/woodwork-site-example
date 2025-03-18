@@ -16,6 +16,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import styles from './ImageGallery.module.css';
 import { ImageGalleryProps, defaultGallerySettings, defaultGalleryStyling } from './ImageGallery.setup';
 import Lightbox from '../Lightbox/Lightbox';
+import { useIsPreviewing } from '@builder.io/react';
 
 /**
  * ImageGallery Component
@@ -33,6 +34,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
   // State for lightbox functionality
   const [isLightboxOpen, setIsLightboxOpen] = useState<boolean>(false);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
+  const isPreviewing = useIsPreviewing();
 
   /**
    * Apply custom animation speed using CSS variables
@@ -89,7 +91,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
    */
   const openLightbox = useCallback((rowIndex: number, imageIndex: number): void => {
     // Only open if lightbox is enabled in settings
-    if (!gallerySettings.enableLightbox) return;
+    if (!gallerySettings.enableLightbox || isPreviewing) return;
 
     // Calculate the absolute index by adding up images in previous rows
     let actualIndex = imageIndex;
