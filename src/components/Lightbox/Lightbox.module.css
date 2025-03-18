@@ -1,6 +1,8 @@
 /**
  * Lightbox.module.css
- * Styles for the Lightbox component that displays images in a fullscreen modal
+ * 
+ * CSS module for the Lightbox component that displays images in a fullscreen modal.
+ * Includes styles for different navigation button types and responsive layouts.
  */
 
 /* Lightbox overlay that covers the entire viewport */
@@ -59,7 +61,7 @@
   border: none;
   width: 50px;
   height: 50px;
-  border-radius: 50%;
+  border-radius: 50%; /* Default circular style */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -76,6 +78,25 @@
 
 .navButton:active {
   transform: scale(0.95); /* Subtle press effect on click */
+}
+
+/* Rectangular button style variant */
+.rectangularButton {
+  border-radius: 4px;
+  width: 60px;
+  height: 40px;
+}
+
+/* Minimal button style variant */
+.minimalButton {
+  background-color: transparent;
+  font-size: 32px;
+  width: 40px;
+  height: 40px;
+}
+
+.minimalButton:hover {
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 /* Previous button positioning */
@@ -154,6 +175,11 @@
     font-size: 20px;
   }
   
+  .rectangularButton {
+    width: 50px;
+    height: 35px;
+  }
+  
   .prevButton {
     left: 10px;
   }
@@ -166,5 +192,24 @@
     bottom: 20px;
     max-width: 90%;
     font-size: 14px;
+  }
+}
+
+/* Small screens / mobile */
+@media (max-width: 480px) {
+  .navButton {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+  
+  .rectangularButton {
+    width: 40px;
+    height: 30px;
+  }
+  
+  .counter {
+    font-size: 12px;
+    padding: 4px 8px;
   }
 }

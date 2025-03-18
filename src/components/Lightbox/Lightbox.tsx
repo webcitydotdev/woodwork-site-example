@@ -1,14 +1,27 @@
-import React, { useEffect, useState } from 'react';
+/**
+ * Lightbox.tsx
+ * 
+ * A customizable lightbox component for image viewing.
+ * Features:
+ * - Keyboard navigation support
+ * - Image captions and counter display
+ * - Customizable styling and behavior
+ * - Touch-friendly mobile interface
+ * 
+ * @version 1.0.0
+ */
+
+import React, { useEffect, useState, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import styles from './Lightbox.module.css';
-import { ImageItem } from '../ImageGallery/ImageGallery.setup';
+import { 
+  LightboxProps, 
+  defaultLightboxSettings, 
+  defaultLightboxStyling 
+} from './Lightbox.setup';
 
-interface LightboxProps {
-  isOpen: boolean;
-  onClose: () => void;
-  images: ImageItem[];
-  currentIndex: number;
-}
+// Empty div element to use as fallback for createPortal during SSR
+const dummyElement = {};
 
 /**
  * Lightbox Component
@@ -16,25 +29,40 @@ interface LightboxProps {
  * Displays images in a fullscreen modal with navigation controls
  * Uses React Portal to render outside the normal component hierarchy
  * for proper fixed positioning and stacking context
+ * 
+ * @param {LightboxProps} props - Component properties
+ * @returns {React.ReactElement | null} Rendered component or null if not open
  */
-const Lightbox: React.FC<LightboxProps> = ({ isOpen, onClose, images, currentIndex }) => {
+const Lightbox: React.FC<LightboxProps> = ({ 
+  isOpen, 
+  onClose, 
+  images, 
+  currentIndex,
+  lightboxSettings = defaultLightboxSettings,
+  styling = defaultLightboxStyling
+}) => {
   const [activeIndex, setActiveIndex] = useState(currentIndex);
   // State to track if we're running in a browser environment for SSR compatibility
   const [isBrowser, setIsBrowser] = useState(false);
+  // Ref to store the DOM element for portal rendering
+  const [portalElement, setPortalElement] = useState<HTMLElement | null>(null);
 
-  // Set browser environment on mount
+  // Set browser environment and portal element on mount
   useEffect(() => {
     setIsBrowser(true);
+    setPortalElement(document.body);
   }, []);
 
-  // Reset the active index when the current index changes
+  // Reset the active index when the currentIndex prop changes
   useEffect(() => {
-    setActiveIndex(currentIndex);
-  }, [currentIndex]);
+    if (currentIndex !== activeIndex) {
+      setActiveIndex(currentIndex);
+    }
+  }, [currentIndex, activeIndex]);
 
   // Handle keyboard navigation
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || !lightboxSettings.enableKeyboardNavigation) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -48,10 +76,12 @@ const Lightbox: React.FC<LightboxProps> = ({ isOpen, onClose, images, currentInd
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, activeIndex, onClose]);
+  }, [isOpen, onClose, lightboxSettings.enableKeyboardNavigation]);
 
   // Prevent body scrolling when lightbox is open
   useEffect(() => {
+    if (!isBrowser) return;
+    
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -60,7 +90,7 @@ const Lightbox: React.FC<LightboxProps> = ({ isOpen, onClose, images, currentInd
     return () => {
       document.body.style.overflow = '';
     };
-  }, [isOpen]);
+  }, [isOpen, isBrowser]);
 
   const handleNext = () => {
     setActiveIndex((prevIndex) => (prevIndex + 1) % images.length);
@@ -70,15 +100,61 @@ const Lightbox: React.FC<LightboxProps> = ({ isOpen, onClose, images, currentInd
     setActiveIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
   };
 
-  // Don't render anything on the server or if not open
-  if (!isBrowser || !isOpen || images.length === 0) return null;
+  // Generate custom styles based on props
+  const customStyles = useMemo(() => ({
+    lightbox: {
+      backgroundColor: styling.backdropColor
+    },
+    navButton: {
+      backgroundColor: styling.navigationButtonColor
+    },
+    navButtonHover: {
+      backgroundColor: styling.navigationButtonHoverColor
+    },
+    caption: {
+      backgroundColor: styling.captionBackgroundColor,
+      color: styling.captionTextColor
+    },
+    counter: {
+      backgroundColor: styling.counterBackgroundColor,
+      color: styling.counterTextColor
+    }
+  }), [styling]);
+
+  // Get navigation button class based on selected style
+  const getNavButtonClass = useMemo(() => {
+    let styleClass = '';
+    
+    switch (lightboxSettings.navigationButtonStyle) {
+      case 'rectangular':
+        styleClass = styles.rectangularButton;
+        break;
+      case 'minimal':
+        styleClass = styles.minimalButton;
+        break;
+      case 'circular':
+      default:
+        styleClass = '';
+        break;
+    }
+    
+    return styleClass;
+  }, [lightboxSettings.navigationButtonStyle]);
+
+  // Don't render anything if not open or no images
+  if (!isOpen || images.length === 0) return null;
   
   // Create the lightbox content
   const lightboxContent = (
-    <div className={styles.lightbox} onClick={onClose}>
+    <div 
+      className={styles.lightbox} 
+      style={customStyles.lightbox}
+      onClick={lightboxSettings.closeOnBackdropClick ? onClose : undefined}
+    >
       <div className={styles.content} onClick={(e) => e.stopPropagation()}>
         <button 
-          className={`${styles.navButton} ${styles.closeButton}`} 
+          className={`${styles.navButton} ${styles.closeButton} ${getNavButtonClass}`} 
+          style={customStyles.navButton}
           onClick={onClose}
           aria-label="Close lightbox"
         >
@@ -86,7 +162,8 @@ const Lightbox: React.FC<LightboxProps> = ({ isOpen, onClose, images, currentInd
         </button>
         
         <button 
-          className={`${styles.navButton} ${styles.prevButton}`} 
+          className={`${styles.navButton} ${styles.prevButton} ${getNavButtonClass}`} 
+          style={customStyles.navButton}
           onClick={handlePrev}
           aria-label="Previous image"
         >
@@ -102,32 +179,37 @@ const Lightbox: React.FC<LightboxProps> = ({ isOpen, onClose, images, currentInd
         </div>
         
         <button 
-          className={`${styles.navButton} ${styles.nextButton}`} 
+          className={`${styles.navButton} ${styles.nextButton} ${getNavButtonClass}`} 
+          style={customStyles.navButton}
           onClick={handleNext}
           aria-label="Next image"
         >
           ›
         </button>
         
-        {images[activeIndex].alt && (
-          <div className={styles.caption}>
+        {lightboxSettings.showCaption && images[activeIndex].alt && (
+          <div className={styles.caption} style={customStyles.caption}>
             {images[activeIndex].alt}
           </div>
         )}
         
-        <div className={styles.counter}>
-          {activeIndex + 1} / {images.length}
-        </div>
+        {lightboxSettings.showCounter && (
+          <div className={styles.counter} style={customStyles.counter}>
+            {activeIndex + 1} / {images.length}
+          </div>
+        )}
       </div>
     </div>
   );
   
+  // Handle SSR case - don't try to use createPortal during server rendering
+  if (!isBrowser || !portalElement) {
+    return null;
+  }
+  
   // Use React Portal to render the lightbox at the document body level
   // This ensures it's not affected by parent element styling
-  return createPortal(
-    lightboxContent,
-    document.body
-  );
+  return createPortal(lightboxContent, portalElement);
 };
 
 export default Lightbox;

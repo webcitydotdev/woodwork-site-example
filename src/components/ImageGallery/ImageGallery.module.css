@@ -7,7 +7,6 @@
 
 /* Gallery container styles */
 .gallery {
-  padding: 4rem 0;
   background-color: #f7f9f9;
   overflow: hidden;
   will-change: transform; /* Performance optimization for animations */
@@ -15,14 +14,13 @@
 
 .container {
   width: 100%;
-  max-width: 1600px;
+  max-width: 1440px;
   margin: 0 auto;
 }
 
 /* Row container styles */
 .rowContainer {
   width: 100%;
-  margin-bottom: 1rem;
   overflow: hidden;
   position: relative;
 }
