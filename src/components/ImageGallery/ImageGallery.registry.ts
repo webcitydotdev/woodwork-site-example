@@ -16,6 +16,7 @@ Builder.registerComponent(ImageGallery, {
   name: "Image Gallery",
   description: "A dynamic and responsive image gallery with lightbox functionality",
   image: "https://img.icons8.com/ios/50/000000/image-gallery.png",
+  
   // Define the inputs/props that will be shown in the Builder.io editor
   inputs: [
     {

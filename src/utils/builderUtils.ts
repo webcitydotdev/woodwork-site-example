@@ -10,6 +10,9 @@ export const REVALIDATION_TIMEFRAMES = {
   DYNAMIC: 0  // No cache for highly dynamic content
 };
 
+// Check if we're in development mode
+const isDevelopment = process.env.NODE_ENV === 'development';
+
 /**
  * Fetch content dynamically from Builder.io.
  * Assumes that the locale has already been validated.
@@ -35,13 +38,24 @@ export const fetchBuilderContent = async (
     // Apply caching strategy based on content type and options
     const cacheOptions: { next?: { revalidate?: number; tags?: string[]; cache?: string } } = {};
     
-    if (options?.noCache) {
+    // In development mode, always disable caching for hot reloading
+    if (isDevelopment) {
+      cacheOptions.next = { 
+        revalidate: 0,
+        cache: 'no-store'
+      };
+    } else if (options?.noCache) {
       cacheOptions.next = { revalidate: 0 };
     } else if (options?.revalidate !== undefined) {
       cacheOptions.next = { revalidate: options.revalidate };
     } else if (options?.tags) {
       cacheOptions.next = { tags: options.tags };
     }
+
+    // Add a random cache buster query param in development mode to ensure fresh content
+    const cacheBusterOptions = isDevelopment ? {
+      cachebuster: Date.now().toString()
+    } : {};
 
     // Fetch content from Builder.io with appropriate caching directives
     const content = await builder
@@ -53,6 +67,7 @@ export const fetchBuilderContent = async (
         options: {
           locale,
           includeRefs: true, // Include referenced content
+          ...cacheBusterOptions
         },
         ...cacheOptions
       })
@@ -84,6 +99,11 @@ export const fetchBuilderContent = async (
  * The revalidation time is set based on the content type, but can be overridden if needed.
  */
 export const getCacheConfig = (contentType: keyof typeof REVALIDATION_TIMEFRAMES = 'PAGE') => {
+  // In development mode, disable cache to ensure fresh content
+  if (isDevelopment) {
+    return { next: { revalidate: 0, cache: 'no-store' } };
+  }
+  
   const revalidate = REVALIDATION_TIMEFRAMES[contentType];
   return { next: { revalidate } };
 };

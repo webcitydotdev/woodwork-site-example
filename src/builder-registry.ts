@@ -1,6 +1,7 @@
 import { builder, Builder } from "@builder.io/react";
 // Import component registries
 import "./components/ImageGallery/ImageGallery.registry";
+import "./components/TestimonialCarousel/TestimonialCarousel.registry";
 
 builder.init(process.env.NEXT_PUBLIC_BUILDER_API_KEY!);
 
