@@ -23,6 +23,44 @@ interface UseBuilderDataProps {
 
 /**
  * Enhanced hook for fetching Builder.io data with Next.js 15 caching
+ * 
+ * @param model The Builder.io model to fetch data from
+ * @param query Optional query object to filter data
+ * @param options Optional options object to configure the request
+ * @param filters Optional filters object to filter data
+ * @param sort Optional sort field to sort data
+ * @param sortBy Optional object with field and direction to sort by
+ * @param limit Optional limit to restrict the number of results
+ * @param offset Optional offset to skip results
+ * @param fields Optional fields to include in the response
+ * @param contentType Optional content type to determine revalidation time
+ * @param noCache Optional flag to disable caching
+ * @returns Object with data, loading state, error, and refetch function
+ * 
+ * This hook uses Builder.io's getAll method to fetch data with caching
+ * It also uses the selected locale from the location store for requests
+ * The revalidation time is determined by the content type or set to 0
+ * The data, loading state, and error are returned along with a refetch function
+ * 
+ * @example (fetching blogs)
+ * const { data, isLoading, error, refetch } = useBuilderData({
+ *  model: 'blog',
+ *  query: { published: true },
+ *  sort: 'date',
+ *  sortBy: { field: 'date', direction: '-1' },
+ *  limit: 10,
+ *  contentType: 'BLOG' //For revalidation time (optional)(default: PAGE)
+ * });
+ * 
+ * @example (fetching pages)
+ * const { data, isLoading, error, refetch } = useBuilderData({
+ *  model: 'page',
+ *  query: { published: true },
+ *  sort: 'title',
+ *  sortBy: { field: 'title', direction: '1' },
+ *  limit: 10,
+ *  contentType: 'PAGE' //For revalidation time (optional)(default: PAGE)
+ * });
  */
 export default function useBuilderData({
   model,
