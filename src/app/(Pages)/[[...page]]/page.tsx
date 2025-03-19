@@ -6,6 +6,7 @@
 import React from "react";
 import { fetchBuilderContent, isValidLocale } from "@/utils/builderUtils";
 import ClientPage from "./ClientPage";
+import { getLocaleFromParams } from "@/utils/localeUtils";
 
 // Page props for dynamic routing
 interface PageParams {
@@ -14,29 +15,16 @@ interface PageParams {
 }
 
 // Server component for dynamic routing
-const Page = async ({ params }: { params: Promise<PageParams> }) => {
-  const resolvedParams = await params;
+const Page = async ({ params }: { params: { page: string[] } }) => {
+  const { locale, urlPath } = getLocaleFromParams(params);
+  const content = await fetchBuilderContent(urlPath, locale, "page");
 
-  // Extract locale from the URL, defaulting to "en"
-  // Page segments are separated by "/"
-  // pageSegments[0] is assumed to be the locale
-  // pageSegments[1..n] are the page segments
-  // urlPath is the path without the locale
-  const pageSegments = resolvedParams.page || [];
-  const localeSegment = pageSegments[0];
-  const locale = localeSegment || "en";
-  const urlPath = "/" + (pageSegments.slice(1).join("/") || "");
-
-  // Fetch Builder.io content dynamically for the page
-  const builderModelName = "page";
-  const content = await fetchBuilderContent(urlPath, locale, builderModelName);
-
-    // Handle missing content or invalid locale
-    if (!content || !isValidLocale(locale)) {
-      return (
-        <div>
-          <h1>Page not found</h1>
-        </div>
+  // Handle missing content or invalid locale
+  if (!content || !isValidLocale(locale)) {
+    return (
+      <div>
+        <h1>Page not found</h1>
+      </div>
       );
     }
 

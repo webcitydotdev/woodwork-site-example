@@ -22,8 +22,8 @@ export const isValidLocale = (locale: string): boolean => {
 
 // Define revalidation timeframes based on content type
 export const REVALIDATION_TIMEFRAMES = {
-  PAGE: 3600,           // 1 hour for regular pages
-  DYNAMIC: 0            // No cache for highly dynamic content
+  PAGE: 3600, // 1 hour for regular pages
+  DYNAMIC: 0  // No cache for highly dynamic content
 };
 
 /**

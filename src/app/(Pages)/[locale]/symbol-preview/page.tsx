@@ -6,6 +6,7 @@
 import React from "react";
 import { fetchBuilderContent, isValidLocale } from "@/utils/builderUtils";
 import ClientPage from "./ClientPage";
+import { getLocaleFromParams } from "@/utils/localeUtils";
 
 interface PageParams {
   page?: string[];
@@ -13,17 +14,9 @@ interface PageParams {
 }
 
 // Server component for the Blog Search Page
-const Page = async ({ params }: { params: Promise<PageParams> }) => {
-  const resolvedParams = await params;
-
-  // Extract locale from the URL, defaulting to "en"
-  // Page segments are separated by "/"
-  // pageSegments[0] is assumed to be the locale
-  // pageSegments[1..n] are the page segments
-  // urlPath is the path without the locale
-  const pageSegments = resolvedParams.page || [];
-  const locale = pageSegments[0] || resolvedParams.locale || "en";
-  const urlPath = "/symbol-preview/symbol";
+const Page = async ({ params }: { params: { locale?: string; page?: string[] } }) => {
+  const { locale } = getLocaleFromParams(params);
+  const urlPath = "/symbol-preview/symbol"; // Fixed path for symbol preview
 
   // Fetch content dynamically from Builder.io
   const builderModelName = "symbol";

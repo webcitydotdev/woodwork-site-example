@@ -1,53 +1,35 @@
-/**
- * @file Location Feature Store
- * @description State management for location-specific features with URL-based locale initialization
- */
-
 import { create } from "zustand";
-import { VALID_LOCALES } from "@/utils/builderUtils";
+import { getLocaleFromParams } from "@/utils/localeUtils";
+import { VALID_LOCALES } from "@/utils/builderUtils"; // ✅ Keep VALID_LOCALES
 
-// Define the shape of the store
-type LocaleState = {
+// Define the store state interface
+interface LocaleState {
   selectedLocale: string;
   setSelectedLocale: (locale: string) => void;
   initializeLocaleFromUrl: () => void;
-};
+}
 
-// Helper function to get locale from URL
-const getLocaleFromUrl = (): string => {
-  if (typeof window !== "undefined") {
-    const pathname = window.location.pathname;
-    const segments = pathname.split("/").filter(Boolean);
+const isValidLocale = (locale: string): boolean => VALID_LOCALES.includes(locale); // ✅ Validate using VALID_LOCALES
 
-    if (segments.length > 0) {
-      const localeSegment = segments[0];
-      // Check if the segment matches a locale pattern (e.g., en, fr, es)
-      if (
-        localeSegment.length === 2 &&
-        VALID_LOCALES.includes(localeSegment)
-      ) {
-        return localeSegment;
-      }
-    }
-  }
-  return "en"; // Default locale
-};
-
-// Create the Zustand store
 const useLocaleStore = create<LocaleState>((set) => ({
-  selectedLocale: "en", // Default to 'en' until client-side initialization
-  setSelectedLocale: (locale) => set({ selectedLocale: locale }),
+  selectedLocale: "en", // Default to 'en' initially
+
+  setSelectedLocale: (locale: string) => {
+    const validLocale = isValidLocale(locale) ? locale : "en"; // ✅ Validate before setting
+    set({ selectedLocale: validLocale });
+  },
+
   initializeLocaleFromUrl: () => {
     if (typeof window !== "undefined") {
-      const localeFromUrl = getLocaleFromUrl();
-      set({ selectedLocale: localeFromUrl });
+      const { locale } = getLocaleFromParams({ page: window.location.pathname.split("/").filter(Boolean) });
+
+      set({ selectedLocale: isValidLocale(locale) ? locale : "en" }); // ✅ Ensure only valid locales are stored
     }
   },
 }));
 
-// Initialize locale from URL when in browser environment
+// ✅ Initialize locale on page load
 if (typeof window !== "undefined") {
-  // Defer initialization to ensure DOM is fully loaded
   window.addEventListener("load", () => {
     useLocaleStore.getState().initializeLocaleFromUrl();
   });
