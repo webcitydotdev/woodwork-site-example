@@ -1,9 +1,11 @@
 // List of valid locales in your application
+// Sync with the locales in your i18n configuration or CMS (builder.io)
+// This list is used to validate the locale extracted from the URL
 export const VALID_LOCALES = [
   'en',
 ];
 
-// Default locale to use when none is specified
+// Default locale to use when none is specified in the URL
 export const DEFAULT_LOCALE = 'en';
 
 /**

@@ -3,6 +3,10 @@
  * @description Central state management for app-wide concerns
  * @typedef {Object} AppStates - Global application state types
  * @property {string} testMessage - Test message state
+ * 
+ * The AppStore is a global store that can be used to manage application-wide state.
+ * It uses Zustand to create a store that can be accessed from any component. 
+ * This is used instead of passing props down through multiple levels of components.
  */
 
 import { create } from 'zustand';

@@ -1,3 +1,7 @@
+// The .setup file is created to define the types of the props that the component will receive.
+// Separating the types from the component file making it more readable and maintainable.
+// This is useful for type checking and autocompletion in the editor.
+
 export interface ImageItem {
   src: string;
   alt: string;

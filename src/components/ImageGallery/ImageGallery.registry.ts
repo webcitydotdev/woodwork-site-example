@@ -1,8 +1,17 @@
 import { Builder } from "@builder.io/react";
 import ImageGallery from "./ImageGallery";
-import { ImageItem } from "./ImageGallery.setup";
 
 // Register the component to Builder.io
+// This will allow you to use the component in the visual editor
+// and define the inputs/props that will be shown in the editor
+
+// name: The name of the component
+// description: A short description of the component
+// image: An image to represent the component in the editor (optional)
+// inputs: An array of inputs/props that will be shown in the editor
+// Each input should have a name, type, and any other configuration options
+// For more information on inputs, see: https://www.builder.io/c/docs/guides/getting-started-with-react#adding-custom-inputs
+
 Builder.registerComponent(ImageGallery, {
   name: "Image Gallery",
   description: "A dynamic and responsive image gallery with lightbox functionality",

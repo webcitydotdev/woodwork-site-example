@@ -11,6 +11,10 @@ import { getLocaleFromParams, VALID_LOCALES, isValidLocale } from "@/utils/local
  * 
  * This store is responsible for managing the locale state of the application.
  * It provides a global state for the locale and functions to set and initialize the locale.
+ * The selected locale is stored in the state and can be accessed from any component for localization.
+ * The locale is initialized from the URL on page load and can be changed using the setSelectedLocale function.
+ * 
+ * If the site is not localized, you can remove this store and edit the page.tsx file to remove the locale logic.
  */
 
 // Define the store state interface

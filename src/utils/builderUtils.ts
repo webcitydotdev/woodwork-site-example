@@ -1,13 +1,10 @@
-// src/utils/builderUtils.ts
-
 import { builder } from "@builder.io/sdk";
-import { notFound } from "next/navigation";
-import { isValidLocale } from "./localeUtils";
 
 // Initialize Builder.io with the public API key
 builder.init(process.env.NEXT_PUBLIC_BUILDER_API_KEY!);
 
 // Define revalidation timeframes based on content type
+// Add more types as needed with appropriate revalidation times
 export const REVALIDATION_TIMEFRAMES = {
   PAGE: 3600, // 1 hour for regular pages
   DYNAMIC: 0  // No cache for highly dynamic content
@@ -81,6 +78,10 @@ export const fetchBuilderContent = async (
  * Helper function to determine appropriate caching strategy based on content type
  * @param contentType The type of content being fetched
  * @returns Cache configuration object for Next.js fetch
+ * 
+ * This function is used to determine the appropriate caching strategy based on the content type.
+ * It returns a configuration object that can be passed to the Next.js fetch function to control caching.
+ * The revalidation time is set based on the content type, but can be overridden if needed.
  */
 export const getCacheConfig = (contentType: keyof typeof REVALIDATION_TIMEFRAMES = 'PAGE') => {
   const revalidate = REVALIDATION_TIMEFRAMES[contentType];
