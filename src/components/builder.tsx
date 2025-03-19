@@ -92,18 +92,18 @@ export function RenderBuilderContent({
     return (
       <BuilderErrorBoundary fallback={ErrorComponent}>
         <Suspense fallback={LoadingFallback}>
-          <BuilderComponent
-            content={content}
-            model={model}
-            locale={locale}
-            options={{
-              // Only fetch needed data for optimal performance
-              includeRefs: true,
-              noTraverse: true, // Prevent unnecessary traversal for performance
-            }}
-            // Handle caching through custom builder context or page props
-            // instead of directly in options to avoid type errors
-          />
+            <BuilderComponent
+              content={content}
+              model={model}
+              locale={locale}
+              options={{
+                // Only fetch needed data for optimal performance
+                includeRefs: true,
+                noTraverse: true, // Prevent unnecessary traversal for performance
+              }}
+              // Handle caching through custom builder context or page props
+              // instead of directly in options to avoid type errors
+            />
         </Suspense>
       </BuilderErrorBoundary>
     );
