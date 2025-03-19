@@ -13,7 +13,7 @@ import "./assets/reset.css";
 import "./assets/brand.css";
 import BuilderProvider from "@/components/BuilderProvider";
 
-// TODO: Check if needed
+// SEO metadata
 export const metadata = {
   title: "Builder.io - Next.js Example",
   description: "Example of using Builder.io with Next.js",
