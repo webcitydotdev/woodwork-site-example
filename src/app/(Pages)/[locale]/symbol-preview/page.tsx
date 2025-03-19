@@ -4,30 +4,33 @@
  */
 
 import React from "react";
-import { fetchBuilderContent, isValidLocale } from "@/utils/builderUtils";
-import ClientPage from "./ClientPage";
+import { fetchBuilderContent } from "@/utils/builderUtils";
 import { getLocaleFromParams } from "@/utils/localeUtils";
+import ClientPage from "./ClientPage";
+import NotFound from "@/components/common/NotFound";
 
 // Server component for the Blog Search Page
 const Page = async ({ params }: { params: { locale?: string; page?: string[] } }) => {
-  const { locale } = await getLocaleFromParams(params);
-  const urlPath = "/symbol-preview/symbol"; // Fixed path for symbol preview
+  // Get locale info and check if valid
+  const localeInfo = await getLocaleFromParams(params);
+  
+  // Only continue if we have a valid locale
+  if (localeInfo.isLocaleValid) {
+    const urlPath = "/symbol-preview/symbol"; // Fixed path for symbol preview
+  
+    // Fetch content dynamically from Builder.io
+    const builderModelName = "symbol";
+    const content = await fetchBuilderContent(urlPath, localeInfo.locale, builderModelName);
 
-  // Fetch content dynamically from Builder.io
-  const builderModelName = "symbol";
-  const content = await fetchBuilderContent(urlPath, locale, builderModelName);
-
-  // Handle missing content or invalid locale
-  if (!content || !isValidLocale(locale)) {
-    return (
-      <div>
-        <h1>Page not found</h1>
-      </div>
-    );
+    // Only render the page if we have valid content
+    if (content) {
+      // Pass the locale and content to the client-side component
+      return <ClientPage locale={localeInfo.locale} content={content} />;
+    }
   }
 
-  // Pass the locale and content to the client-side component
-  return <ClientPage locale={locale} content={content} />;
+  // Show NotFound for any error case (invalid locale or missing content)
+  return <NotFound />;
 };
 
 export default Page;

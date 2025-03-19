@@ -4,7 +4,7 @@ import React, { createContext, useContext, ReactNode, useState, useEffect } from
 import { builder } from '@builder.io/sdk';
 import { useShallow } from 'zustand/react/shallow';
 import useLocaleStore from '@/store/useLocaleStore';
-import { VALID_LOCALES } from '@/utils/builderUtils';
+import { isValidLocale } from '@/utils/localeUtils';
 
 // Initialize Builder.io with public API key
 builder.init(process.env.NEXT_PUBLIC_BUILDER_API_KEY!);
@@ -51,34 +51,25 @@ export function BuilderProvider({
   // Use controlled state for locale to ensure consistency during hydration
   const [localeState, setLocaleState] = useState(defaultLocale);
   
-  // Get the selected locale from the locale store
-  const { selectedLocale } = useLocaleStore(
-    useShallow((state) => ({
-      selectedLocale: state.selectedLocale,
-    }))
-  );
+  // Get the selected locale from global store
+  const selectedLocale = useLocaleStore(useShallow(state => state.selectedLocale));
   
-  // Mark when hydration is complete (client-side only)
+  // Handle hydration mismatch
   useEffect(() => {
     setIsHydrated(true);
   }, []);
   
-  // Update localeState after hydration from Zustand store
+  // Update locale state after hydration to prevent mismatches
   useEffect(() => {
     if (isHydrated) {
       // Only update after hydration to maintain consistency
-      const validLocale = VALID_LOCALES.includes(selectedLocale) 
+      const validLocale = isValidLocale(selectedLocale) 
         ? selectedLocale 
         : defaultLocale;
       
       setLocaleState(validLocale);
     }
   }, [selectedLocale, defaultLocale, isHydrated]);
-
-  // Create a function to check if a locale is valid
-  const isValidLocale = (localeToCheck: string) => {
-    return VALID_LOCALES.includes(localeToCheck);
-  };
 
   // Value to provide in context
   const contextValue: BuilderContextType = {

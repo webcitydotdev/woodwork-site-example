@@ -4,26 +4,32 @@
  */
 
 import React from "react";
-import { fetchBuilderContent, isValidLocale } from "@/utils/builderUtils";
-import ClientPage from "./ClientPage";
+import { fetchBuilderContent } from "@/utils/builderUtils";
 import { getLocaleFromParams } from "@/utils/localeUtils";
+import ClientPage from "./ClientPage";
+import NotFound from "@/components/common/NotFound";
 
 // Server component for dynamic routing
-const Page = async ({ params }: { params: { page: string[] } }) => {
-  const { locale, urlPath } = await getLocaleFromParams(params);
-  const content = await fetchBuilderContent(urlPath, locale, "page");
+const Page = async ({ params }: { params: { page: string[] | undefined } }) => {
+  // Get locale info and check if valid
+  const localeInfo = await getLocaleFromParams(params);
+  
+  // For root URL (/), use home page path
+  const contentPath = localeInfo.urlPath === "/" ? "/" : localeInfo.urlPath;
+  
+  // Only continue if we have a valid locale, otherwise content will be null
+  if (localeInfo.isLocaleValid) {
+    // Fetch content using the resolved path and locale
+    const content = await fetchBuilderContent(contentPath, localeInfo.locale, "page");
 
-  // Handle missing content or invalid locale
-  if (!content || !isValidLocale(locale)) {
-    return (
-      <div>
-        <h1>Page not found</h1>
-      </div>
-      );
+    // Only render the page if we have valid content
+    if (content) {
+      return <ClientPage locale={localeInfo.locale} content={content} />;
     }
+  }
 
-  // Pass the locale to the client-side component
-  return <ClientPage locale={locale} content={content} />;
+  // Show NotFound for any error case (invalid locale or missing content)
+  return <NotFound />;
 };
 
 export default Page;
