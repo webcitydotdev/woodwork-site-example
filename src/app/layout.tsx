@@ -11,7 +11,6 @@
 
 import "./assets/reset.css";
 import "./assets/brand.css";
-import BuilderProvider from "@/components/BuilderProvider";
 
 // SEO metadata
 export const metadata = {
@@ -27,9 +26,7 @@ export default function RootLayout({
   return (
     <html>
       <body>
-        <BuilderProvider>
-          {children}
-        </BuilderProvider>
+        {children}
       </body>
     </html>
   );

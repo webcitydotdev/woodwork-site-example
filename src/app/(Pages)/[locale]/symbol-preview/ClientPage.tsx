@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { RenderBuilderContent } from "@/components/builder";
 import useLocationStore from "@/store/useLocaleStore";
+import Loading from "@/components/common/Loading";
 
 const ClientPage = ({
   locale,
@@ -11,20 +12,28 @@ const ClientPage = ({
   locale: string;
   content: any;
 }) => {
+  // Add hydration safety with useState and useEffect
+  const [isHydrated, setIsHydrated] = useState(false);
+
   // Get the setSelectedLocale function from the Zustand store
-  // This step is necessary to hydrate the Zustand store with the server-provided locale
   const setSelectedLocale = useLocationStore((state) => state.setSelectedLocale);
 
-  // Hydrate the Zustand store with the server-provided locale
-  // Set the selected locale in the Zustand store
+  // Handle hydration
   useEffect(() => {
+    // Mark as hydrated after first render
+    setIsHydrated(true);
+    // Hydrate the Zustand store with the server-provided locale
     setSelectedLocale(locale);
   }, [locale, setSelectedLocale]);
 
+  // Show loading during hydration to avoid mismatch
+  if (!isHydrated) {
+    return <Loading />;
+  }
+
+  // After hydration (client-side), render with full functionality
   return (
-    <>
-      <RenderBuilderContent content={content} model="symbol" locale={locale} />
-    </>
+    <RenderBuilderContent content={content} model="symbol" locale={locale} />
   );
 };
 
