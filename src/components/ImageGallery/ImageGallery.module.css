@@ -10,7 +10,6 @@
   background-color: #f7f9f9;
   overflow: hidden;
   will-change: transform; /* Performance optimization for animations */
-  border-radius: 4px;
 }
 
 .container {
