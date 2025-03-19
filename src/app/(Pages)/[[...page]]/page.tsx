@@ -8,15 +8,9 @@ import { fetchBuilderContent, isValidLocale } from "@/utils/builderUtils";
 import ClientPage from "./ClientPage";
 import { getLocaleFromParams } from "@/utils/localeUtils";
 
-// Page props for dynamic routing
-interface PageParams {
-  page: string[];
-  locale: string;
-}
-
 // Server component for dynamic routing
 const Page = async ({ params }: { params: { page: string[] } }) => {
-  const { locale, urlPath } = getLocaleFromParams(params);
+  const { locale, urlPath } = await getLocaleFromParams(params);
   const content = await fetchBuilderContent(urlPath, locale, "page");
 
   // Handle missing content or invalid locale

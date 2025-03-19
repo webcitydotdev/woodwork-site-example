@@ -1,8 +1,8 @@
-export const getLocaleFromParams = (params: { page?: string[]; locale?: string }): { locale: string; urlPath: string } => {
-    const pageSegments = params.page || [];
-    const locale = pageSegments[0] || params.locale || "en"; // Default to "en" if no valid locale is found
-    const urlPath = "/" + (pageSegments.slice(1).join("/") || ""); // Construct URL path without the locale segment
-  
-    return { locale, urlPath };
-  };
-  
+export const getLocaleFromParams = async (params: { page?: string[]; locale?: string }): Promise<{ locale: string; urlPath: string }> => {
+  const resolvedParams = await params;
+  const pageSegments = resolvedParams.page || [];
+  const locale = pageSegments[0] || resolvedParams.locale || "en"; // Default to "en"
+  const urlPath = "/" + (pageSegments.slice(1).join("/") || "");
+
+  return { locale, urlPath };
+};

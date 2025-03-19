@@ -8,14 +8,9 @@ import { fetchBuilderContent, isValidLocale } from "@/utils/builderUtils";
 import ClientPage from "./ClientPage";
 import { getLocaleFromParams } from "@/utils/localeUtils";
 
-interface PageParams {
-  page?: string[];
-  locale?: string;
-}
-
 // Server component for the Blog Search Page
 const Page = async ({ params }: { params: { locale?: string; page?: string[] } }) => {
-  const { locale } = getLocaleFromParams(params);
+  const { locale } = await getLocaleFromParams(params);
   const urlPath = "/symbol-preview/symbol"; // Fixed path for symbol preview
 
   // Fetch content dynamically from Builder.io

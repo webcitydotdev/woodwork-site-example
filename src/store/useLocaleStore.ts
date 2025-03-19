@@ -19,9 +19,9 @@ const useLocaleStore = create<LocaleState>((set) => ({
     set({ selectedLocale: validLocale });
   },
 
-  initializeLocaleFromUrl: () => {
+  initializeLocaleFromUrl: async () => {
     if (typeof window !== "undefined") {
-      const { locale } = getLocaleFromParams({ page: window.location.pathname.split("/").filter(Boolean) });
+      const { locale } = await getLocaleFromParams({ page: window.location.pathname.split("/").filter(Boolean) });
 
       set({ selectedLocale: isValidLocale(locale) ? locale : "en" }); // ✅ Ensure only valid locales are stored
     }
