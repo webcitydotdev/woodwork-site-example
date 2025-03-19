@@ -1,5 +1,4 @@
 import { Builder } from '@builder.io/react';
-import { testimonialCarouselModel } from './TestimonialCarousel.model';
 import TestimonialCarousel from './TestimonialCarousel';
 
 Builder.registerComponent(TestimonialCarousel, 
